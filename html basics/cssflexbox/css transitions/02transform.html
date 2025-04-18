@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        @keyframes bounce{
+            0%{
+                transform:translateY(0);
+            }
+            20%{
+                transform:translateY(20vh)
+            }
+            50%{
+                transform:translateY(100vh);
+            }
+            75%{
+                transform:translateY(75vh);
+            }
+            100%{
+                transform:translateY(100vh);
+            }
+        }
+
+
+
+
+        button{
+            background-color:blue;
+            width:100px;
+            border-radius: 50%;
+            height: 100px;
+            transition: all 2s linear 0s;
+            animation: bounce 1s ease 0s infinite ;
+        
+        }
+        button:hover{
+            background-color: aqua;
+            color:white;
+           
+        }
+
+    </style>
+    
+</head>
+<body>
+    <button>Transform Button</button>
+    
+    
+</body>
+</html>

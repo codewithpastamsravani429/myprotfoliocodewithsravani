@@ -4,22 +4,134 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        body{
+            margin:0;
+            background-color: antiquewhite;
+            font-size: 15px;
+        }
+    *{
+        font-family:monospace;
+    
+    }
+        header{
+            height:100vh;
+            color:white;
+            background-color: #2196F3;
+            display: flex;  
+            flex-direction:column;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+
+        }
+        .button{
+            height: 30px;
+            width: 100px ;
+            border:none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin:10px;
+
+        }
+        .button:hover{
+            color: white;
+            background-color:#0d497a ;
+        }
+         header h1{
+            color:wheat;
+            text-align: center;
+            
+        }
+        main{
+            padding: 20px;
+        }
+        section{
+            height: 100vh;
+            border:1px solid grey;
+            border-radius: 15px;
+            margin-bottom:20px;
+            display: flex;  
+            flex-direction:column;
+            justify-content: center;
+            align-items: center;
+            padding:7px;
+
+        }
+        h1{
+            color:#2196F3;
+            font-size:3rem;
+            
+        }
+        .submit{
+            height: 30px;
+            width: 100px ;
+            border:none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            background-color:#2196F3 ;
+            
+        }
+        .submit:hover{
+            background-color:#0d497a;
+        }
+        input{
+            border-radius: 5px;
+            border:1px solid lightgray;
+            height: 25px;
+
+        }
+        footer{
+            background-color: black;
+            color:lightgray;
+            height:124px;
+            display: flex;  
+            flex-direction:column;
+            justify-content: center;
+            align-items: center;
+        }
+        .fixedbutton{
+            position:fixed;
+            bottom:10px;
+            right:10px;
+            height:70px;
+            width:70px;
+            border-color:black;
+            border-radius: 50%;
+            cursor:pointer;
+            color:white;
+            background-color: #2196f3;
+        }
+        a{
+          text-decoration: none;
+        }
+        form div{
+            margin: 5px 0;
+        }
+        
+
+       
+    </style>
 </head>
 <body>
     <header>
+     <div> 
     <h1>Welcome to My Protfolio</h1>
-    <a href=""> 
-        <button>About</button>
+    <br>
+    <a href="#About"> 
+        <button class="button">About</button>
     </a>
-    <a href="">
-        <button>Skills</button>
+    <a href="#My skills">
+        <button class="button">Skills</button>
     </a>
-    <a href="">
-        <button>Projects</button>
+    <a href="#My Projects">
+        <button class="button">Projects</button>
     </a>
-    <a href="">
-        <button>Contact</button>
+    <a href="#Contact Me">
+        <button class="button">Contact</button>
     </a>
+     </div>  
     </header>
     <main>
         <section id="About"> 
@@ -72,29 +184,41 @@
         <section id="Contact Me">
             <h1>Contact Me :</h1>
         <p>Feel free to get in touch with me using the form below:</p> 
-        <form>
+        <form action="">
+            <div>
         <label for="Name">Name:</label>
         <input type="text" required>
-        <br>
+            </div>
+        
+        <div>
         <label for="email">Email:</label>
         <input type="email" required>
-        <br>
+        </div>
+        
+        <div>
         <b>Choose your gender:</b>
         <input type="radio" id="maleradio" value="male">
         <label for="maleradio">male</label>
         <input type="radio" id="femaleradio" value="female">
         <label for="femaleradio">female</label>
-        <br>
+        </div>
+        
+        <div>
         <b>Select your interests:</b>
         <input type="checkbox" id="coding">
         <label for="coding">coding</label>
         <input type="checkbox" id="non coding">
         <label for="non coding">non coding</label>
-        <br>
+        </div>
+        
+        <div>
         <label for="Bio"><b>Bio(up to 200 characters)</b>:</label>
         <input type="text" min="50" max="200">
-        <br>
-        <button type="submit">Submit</button>
+        </div>
+    
+        <div>
+        <button type="submit" class="submit">Submit</button>
+        </div>
     
         </form>
 
@@ -102,6 +226,9 @@
 
         </section>
     </main>
+    <a href="">
+         <button class="fixedbutton">TOP</button>
+    </a>
     <footer>
         <p>@ 2025 My Portfolio</p>
     </footer>
