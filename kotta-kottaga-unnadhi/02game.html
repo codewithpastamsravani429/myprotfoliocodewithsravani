@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Counter Application </title>
+    </head>
+<body>
+    <p id="result">0</p>
+    <button id="increment">Increment</button> 
+    <button id="decrement">Decrement</button>
+    <script>
+         const increment=document.getElementById("increment");
+         const decrement=document.getElementById("decrement");
+         const resultelement=document.getElementById("result");
+         document.write(increment);
+         let counter=0;
+         increment.addEventListener('click',function(){
+          
+         counter=counter+1;  
+        resultelement.textContent=counter;
+        });
+
+        
+        decrement.addEventListener("click",function(){
+            if(counter > 0){
+            
+            counter=counter-1;
+            }
+            resultelement.textContent=counter;
+        });
+         document.write("migata panulu chesthunnam");
+          
+
+
+        
+    </script>
+    
+</body>
+</html>

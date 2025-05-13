@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Simple Blog App</title>
+  <style>
+    body {
+  font-family: sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+form input, form textarea {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+}
+
+form button {
+  padding: 10px 20px;
+  background: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+#posts {
+  margin-top: 20px;
+}
+
+.post {
+  background: #e9ecef;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+}
+
+.post h2 {
+  margin: 0 0 10px;
+}
+  </style>
+  
+</head>
+<body>
+  <div class="container">
+    <h1>My Blog</h1>
+    <form id="blogForm">
+      <input type="text" id="title" placeholder="Post Title" required />
+      <textarea id="content" placeholder="Write your post..." required></textarea>
+      <button type="submit">Publish</button>
+    </form>
+    <div id="posts"></div>
+    <script>
+        const form = document.getElementById('blogForm');
+const postsContainer = document.getElementById('posts');
+
+// Load posts from localStorage
+const savedPosts = JSON.parse(localStorage.getItem('blogPosts')) || [];
+
+function displayPosts() {
+  postsContainer.innerHTML = '';
+  savedPosts.forEach((post, index) => {
+    const postDiv = document.createElement('div');
+    postDiv.className = 'post';
+    postDiv.innerHTML = `
+      <h2>${post.title}</h2>
+      <p>${post.content}</p>
+    `;
+    postsContainer.appendChild(postDiv);
+  });
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const title = document.getElementById('title').value;
+  const content = document.getElementById('content').value;
+
+  const newPost = { title, content };
+  savedPosts.unshift(newPost); // Add to start of array
+  localStorage.setItem('blogPosts', JSON.stringify(savedPosts));
+
+  form.reset();
+  displayPosts();
+});
+
+displayPosts();
+    </script>
+  </div>
+
+  
+</html>

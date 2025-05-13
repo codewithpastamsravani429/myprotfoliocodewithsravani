@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Netflix Clone</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+  margin: 0;
+  background-color: #141414;
+  color: #fff;
+  font-family: Arial, sans-serif;
+}
+
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: black;
+  align-items: center;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: red;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 20px;
+}
+
+nav ul li {
+  cursor: pointer;
+}
+
+.hero {
+  padding: 100px 20px;
+  text-align: center;
+  background-image: url('https://assets.nflxext.com/ffe/siteui/vlv3/6a738...'); /* You can add a real background */
+  background-size: cover;
+}
+
+.hero h1 {
+  font-size: 3em;
+  margin-bottom: 20px;
+}
+
+.hero h2 {
+  font-size: 1.5em;
+  margin-bottom: 30px;
+}
+
+.hero button {
+  padding: 15px 30px;
+  font-size: 1em;
+  background-color: red;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.movie-row {
+  padding: 20px;
+}
+
+.movie-posters {
+  display: flex;
+  gap: 10px;
+  overflow-x: scroll;
+}
+
+.movie-posters img {
+  border-radius: 5px;
+}
+
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="logo">NETFLIX</div>
+    <nav>
+      <ul>
+        <li>Home</li>
+        <li>TV Shows</li>
+        <li>Movies</li>
+        <li>Latest</li>
+        <li>My List</li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h1>Unlimited movies, TV shows, and more.</h1>
+    <h2>Watch anywhere. Cancel anytime.</h2>
+    <button>Get Started</button>
+  </section>
+
+  <section class="movie-row">
+    <h3>Popular on Netflix</h3>
+    <div class="movie-posters">
+      <img src="https://via.placeholder.com/150x220?text=Movie+1" alt="Movie 1" />
+      <img src="https://via.placeholder.com/150x220?text=Movie+2" alt="Movie 2" />
+      <img src="https://via.placeholder.com/150x220?text=Movie+3" alt="Movie 3" />
+      <img src="https://via.placeholder.com/150x220?text=Movie+4" alt="Movie 4" />
+    </div>
+  </section>
+
+  <script src="script.js"></script>
+  <script>
+    // Add interactivity later if needed
+console.log("Netflix Clone Ready");
+
+  </script>
+</body>
+</html>

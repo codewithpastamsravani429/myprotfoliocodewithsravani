@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Expense Tracker</title>
+  <style>
+    body {
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+  margin: 0;
+  padding: 20px;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  background: #fff;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3 {
+  text-align: center;
+  color: #333;
+}
+
+form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+input {
+  padding: 10px;
+  flex: 1 1 30%;
+}
+
+button {
+  padding: 10px 20px;
+  background: #28a745;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #218838;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: center;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+.delete-btn {
+  color: red;
+  cursor: pointer;
+}
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💸 Expense Tracker</h1>
+
+    <form id="expense-form">
+      <input type="text" id="description" placeholder="Description" required />
+      <input type="number" id="amount" placeholder="Amount" required />
+      <input type="text" id="category" placeholder="Category" required />
+      <button type="submit">Add Expense</button>
+    </form>
+
+    <h2>Expenses</h2>
+    <table id="expense-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Category</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Expenses will be inserted here -->
+      </tbody>
+    </table>
+
+    <h3>Total: $<span id="total">0.00</span></h3>
+  </div>
+
+  <script >
+    const form = document.getElementById('expense-form');
+const tableBody = document.querySelector('#expense-table tbody');
+const totalDisplay = document.getElementById('total');
+
+let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+
+function updateTotal() {
+  const total = expenses.reduce((sum, exp) => sum + parseFloat(exp.amount), 0);
+  totalDisplay.textContent = total.toFixed(2);
+}
+
+function renderExpenses() {
+  tableBody.innerHTML = "";
+  expenses.forEach((exp, index) => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${exp.description}</td>
+      <td>$${parseFloat(exp.amount).toFixed(2)}</td>
+      <td>${exp.category}</td>
+      <td>${exp.date}</td>
+      <td><span class="delete-btn" onclick="deleteExpense(${index})">🗑️</span></td>
+    `;
+    tableBody.appendChild(row);
+  });
+  updateTotal();
+}
+
+function deleteExpense(index) {
+  expenses.splice(index, 1);
+  localStorage.setItem('expenses', JSON.stringify(expenses));
+  renderExpenses();
+}
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const description = document.getElementById('description').value;
+  const amount = document.getElementById('amount').value;
+  const category = document.getElementById('category').value;
+  const date = new Date().toLocaleString();
+
+  expenses.push({ description, amount, category, date });
+  localStorage.setItem('expenses', JSON.stringify(expenses));
+  renderExpenses();
+  form.reset();
+});
+
+renderExpenses();
+
+
+  </script>
+</body>
+</html>

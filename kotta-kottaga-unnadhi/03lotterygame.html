@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Lottery game </title>
+    <style>
+        h1{
+            text-align: center;
+        }
+        .container{
+            display: flex;
+            justify-content:center;
+            flex-direction: column;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1> Lottery game </h1>
+    <div class="container">
+    <img src="" height="300px" width="400px">
+    <h2 id="result"></h2>
+    <button id="picknumber">Pick a number</button>
+    </div>
+
+   
+
+    <script>
+       
+       const picknumber=document.getElementById("picknumber");
+       const result=document.getElementById("result");
+       const gifts=[
+        "$100 cash",
+        "Toy car",
+        "Chocolate box",
+        "smartphone cover",
+        "headphone",
+        "wallet",
+        "gift hamper",
+        "digital photo frame",
+
+    ];
+
+
+       document.write(gifts);
+       picknumber.addEventListener("click",function(){
+        let randomnumber=Math.random()*50;
+        let drawnNumber=Math.floor(randomnumber)+1;
+        document.write(gifts[drawnNumber-1]);
+        const gift=gifts[drawnNumber-1];
+        result.textContent= {drawnNumber},{gift};
+        });
+
+
+       
+    </script>
+    
+</body>
+</html>
