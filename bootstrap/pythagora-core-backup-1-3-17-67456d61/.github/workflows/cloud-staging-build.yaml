@@ -1,0 +1,184 @@
+name: Staging Cloud Build and Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      extension_commit_sha:
+        description: "Extension commit SHA (defaults to latest commit on selected branch)"
+        required: false
+        type: string
+        default: ""
+      extension_branch:
+        description: "Extension branch to use"
+        required: false
+        type: string
+        default: "main"
+      core_commit_sha:
+        description: "Core commit SHA (defaults to latest commit on selected branch)"
+        required: false
+        type: string
+        default: ""
+      core_branch:
+        description: "Core branch to use"
+        required: false
+        type: string
+        default: "main"
+
+permissions:
+ contents: write
+
+jobs:
+  get-versions:
+    runs-on: ubuntu-latest
+    outputs:
+      extension_sha: ${{ steps.get-extension-sha.outputs.extension_sha }}
+      core_sha: ${{ steps.get-core-sha.outputs.core_sha }}
+      combined_tag: ${{ steps.generate-tag.outputs.combined_tag }}
+
+    steps:
+      - name: Checkout Extension
+        uses: actions/checkout@v4
+        with:
+          repository: Pythagora-io/gpt-pilot-vs-code-extension
+          token: ${{ secrets.GH_PAT }} 
+          path: tmp_extension
+          ref: ${{ inputs.extension_commit_sha || inputs.extension_branch }} 
+          fetch-depth: 0
+
+      - name: Get extension SHA
+        id: get-extension-sha
+        run: |
+          cd tmp_extension
+          SHA=$(git rev-parse HEAD)
+          echo "Extension SHA: $SHA"
+          echo "extension_sha=$SHA" >> $GITHUB_OUTPUT
+          cd ..
+    
+          
+      - name: Checkout Core
+        uses: actions/checkout@v4
+        with:
+          repository: Pythagora-io/pythagora-v1
+          token: ${{ secrets.GH_PAT }}
+          path: tmp_core
+          ref: ${{ inputs.core_commit_sha || inputs.core_branch }}
+          fetch-depth: 0
+      
+      - name: Get core SHA
+        id: get-core-sha
+        run: |
+          cd tmp_core
+          SHA=$(git rev-parse HEAD)
+          echo "Core SHA: $SHA"
+          echo "core_sha=$SHA" >> $GITHUB_OUTPUT
+          cd ..
+    
+      - name: Generate combined image tag
+        id: generate-tag
+        run: |
+          EXT_SHORT=$(echo "${{ steps.get-extension-sha.outputs.extension_sha }}" | cut -c1-7)
+          CORE_SHORT=$(echo "${{ steps.get-core-sha.outputs.core_sha }}" | cut -c1-7)
+          TAG="ext-${EXT_SHORT}_core-${CORE_SHORT}"
+          echo "Combined tag: $TAG"
+          echo "combined_tag=$TAG" >> $GITHUB_OUTPUT
+
+  deploy:
+    needs: get-versions
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Extension
+        uses: actions/checkout@v4
+        with:
+          repository: Pythagora-io/gpt-pilot-vs-code-extension
+          token: ${{ secrets.GH_PAT }} 
+          path: tmp_extension
+          ref: ${{ needs.get-versions.outputs.extension_sha }}  # Use SHA instead of version
+          fetch-depth: 0
+          
+      - name: Checkout Core
+        uses: actions/checkout@v4
+        with:
+          repository: Pythagora-io/pythagora-v1
+          token: ${{ secrets.GH_PAT }}
+          path: tmp_core
+          ref: ${{ needs.get-versions.outputs.core_sha }}
+          fetch-depth: 0
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'  
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup extension
+        run: |
+          cd tmp_extension
+          npm install
+          npm run compile:ts
+          npm install -g @vscode/vsce
+          vsce package
+          cd ..
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1 
+  
+      - name: Login to ECR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ secrets.ECR_URL }}
+          username: ${{ vars.AWS_ACCESS_KEY_ID }}
+          password: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Docker build and push
+        run: |
+          cd tmp_core
+          cp ../tmp_extension/*.vsix ./pythagora-vs-code.vsix
+          docker build --platform=linux/amd64 -f Dockerfile -t ${{ secrets.ECR_URL }}/pythagora/workspace:${{ needs.get-versions.outputs.combined_tag }} .
+          docker push ${{ secrets.ECR_URL }}/pythagora/workspace:${{ needs.get-versions.outputs.combined_tag }}
+          cd ..
+
+      - name: Checkout Workspace Helm
+        uses: actions/checkout@v4
+        with:
+          repository: Pythagora-io/workspace-helm
+          token: ${{ secrets.GH_PAT }}
+          path: tmp_wh
+          ref: 'staging'
+          fetch-depth: 0
+
+      - name: Install yq
+        run: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+  
+      - name: Commit and push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd tmp_wh
+          new_value="${{ needs.get-versions.outputs.combined_tag }}"
+          file_path="chart/values.yaml"
+          current_value=$(yq '.workspace.image.tag' "$file_path")
+
+          
+          if [ "$current_value" = "$new_value" ]; then
+          echo "No changes to commit, skipping..."
+          else
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            yq -i ".workspace.image.tag = \"${new_value}\"" "$file_path"
+            git add $file_path
+            VERSION=${{ needs.get-versions.outputs.combined_tag }}
+            git commit -m "version $VERSION"
+            git push origin staging
+          fi
+          cd ..

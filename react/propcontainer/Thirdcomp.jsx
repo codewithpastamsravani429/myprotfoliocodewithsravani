@@ -7,3 +7,4 @@ const Thirdcomp = () => {
 }
 
 export default Thirdcomp
+ 

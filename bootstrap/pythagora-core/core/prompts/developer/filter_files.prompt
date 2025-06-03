@@ -1,0 +1,27 @@
+{% if state.current_task %}
+The next task we need to work on, and have to focus on, is this task:
+```
+{{ state.current_task.description }}
+```
+{% endif %}
+
+{% if user_feedback %}User who was using the app sent you this feedback:
+```
+{{ user_feedback }}
+```
+{% endif %}
+
+{% if solution_description %}
+Focus on solving this issue in the following way:
+```
+{{ solution_description }}
+```
+{% endif %}
+
+**IMPORTANT**
+The files necessary for a developer to understand, modify, implement, and test the current task are considered to be relevant files.
+Your job is select which of existing files below are relevant for the current task. You have to select ALL files that are relevant to the current task. Think step by step of everything that has to be done in this task and which files contain needed information.
+
+{% include "partials/files_descriptions.prompt" %}
+
+{% include "partials/relative_paths.prompt" %}
